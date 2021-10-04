@@ -64,5 +64,9 @@ export default StyleSheet.create({
   buttonText: {
     color:"#2B2B52",
     fontSize: 20
-  }
+  },
+  item: {
+    margin: 15,
+    padding: 5
+  },
 });
