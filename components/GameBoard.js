@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState, useEffect} from "react";
 import { Text, View, Pressable} from "react-native";
 import styles from '../style/style';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -11,7 +11,7 @@ const CIRCLE = 'circle';
 const SHIP_AMOUNT = 3;
 const BOMB_AMOUNT = 15;
 const BOARDSIZE = 25;
-let initialBoard = Array(BOARDSIZE).fill(null).map((_, i) => ({id: i+1, ship: false, bombed: false}));
+const initialBoard = Array(BOARDSIZE).fill(null).map((_, i) => ({id: i, ship: false, bombed: false}));
 export default function GameBoard() {
   const [board, setBoard] = useState(initialBoard);
   const [hit, setHits] = useState(0);
@@ -20,6 +20,22 @@ export default function GameBoard() {
   const [time, setTime] = useState(0);
   const [status, setStatus] = useState('Game has not started');
   const [gameStarted, setGameStarted] = useState(false);
+
+  useEffect(() => {
+    if(gameStarted){
+      const id = window.setInterval(()=> {
+        setTime(time => time-1);
+      }, 1000);
+      return () => window.clearInterval(id);
+    }
+  }, [gameStarted])
+
+  useEffect(() => {
+    console.log(time)
+    if(time <= 0){
+      gameOver('time');
+    }
+  }, [time])
 
   function hideShips(){
     let shipPlaced = 0;
@@ -33,27 +49,17 @@ export default function GameBoard() {
         }
       }
     }
-    console.log(shipPlaced)
-    console.log(board)
-    let count = 0;
-    let vaarat = 0;
-    for(let i = 0; i < board.length; i++){
-      console.log("Laivat " + board[i].ship)
-      if(board[i].ship){
-        count += count + 1;
-      } else {
-        console.log("False arvoja " + vaarat)
-        vaarat += vaarat + 1;
-      }
-    }
-    console.log("True arvoja " + count)
-    console.log("False arvoja " + vaarat)
   }
 
+
   function resetGame(){
-    setBoard(Array(BOARDSIZE).fill(null).map((_, i) => ({id: i+1, ship: false, bombed: false})));
     hideShips();
+    setShips(SHIP_AMOUNT);
+    setBombs(BOMB_AMOUNT);
+    setBoard(Array(BOARDSIZE).fill(null).map((_, i) => ({id: i, ship: false, bombed: false})));
+    setStatus('Click the start button first...');
     setGameStarted(true);
+    setTime(30);
   }
 
   function chooseItemColor(number){
@@ -77,16 +83,30 @@ export default function GameBoard() {
     }
   }
 
+  function gameOver(result){
+    setGameStarted(false);
+    if(result === 'win'){
+      setStatus("You sinked all ships.");
+    } else if(result === 'time'){
+      setStatus("Timeout. Ships remaining");
+    } else {
+      setStatus("Game over. Ships remaining");
+    }
+  }
+
   function drawItem(number){
     if(board[number].bombed === false && gameStarted) {
+      setStatus('Game is on...');
       board[number].bombed = true;
+      setBombs(bombs - 1);
       if(bombs === BOMB_AMOUNT){
         setStatus("jee");
+        
       } else if(board.indexOf(START) === -1){
         setStatus('No winner');
       }
     }
-}
+  }
 
 
   const NBR_OF_ROWS = initialBoard.length/5;
@@ -110,7 +130,7 @@ export default function GameBoard() {
 
         </Pressable>
       );
-    }//rivit
+    }
     let row = <View key={"row" + x}>{cols.map((item) => item)}</View>
     items.push(row);
   }
