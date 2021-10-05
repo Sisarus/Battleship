@@ -14,11 +14,12 @@ const BOARDSIZE = 25;
 const initialBoard = Array(BOARDSIZE).fill(null).map((_, i) => ({id: i, ship: false, bombed: false}));
 export default function GameBoard() {
   const [board, setBoard] = useState(initialBoard);
-  const [hit, setHits] = useState(0);
+  const [hits, setHits] = useState(0);
   const [ships, setShips] = useState(0);
   const [bombs, setBombs] = useState(0);
   const [time, setTime] = useState(0);
   const [status, setStatus] = useState('Game has not started');
+  const [buttonText, setButtonText] = useState('Start game');
   const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
@@ -26,12 +27,17 @@ export default function GameBoard() {
       const id = window.setInterval(()=> {
         setTime(time => time-1);
       }, 1000);
+      if(ships === 0){
+        gameOver('win');
+      }
+      if(bombs === 0){
+        gameOver('');
+      }
       return () => window.clearInterval(id);
     }
   }, [gameStarted])
 
   useEffect(() => {
-    console.log(time)
     if(time <= 0){
       gameOver('time');
     }
@@ -39,25 +45,31 @@ export default function GameBoard() {
 
   function hideShips(){
     let shipPlaced = 0;
-    while(shipPlaced <= SHIP_AMOUNT){
+    let boardToSea = board;
+    let lista = [];
+    while(shipPlaced !== SHIP_AMOUNT){
       let randomNumber = Math.floor(Math.random() * BOARDSIZE);
-      for(let i = 0; i < board.length; i++){
-        if(board[i].id === randomNumber){
-          console.log(randomNumber);
-          board[i].ship = true;
-          shipPlaced += shipPlaced + 1;
-        }
+      console.log(randomNumber);
+      if(boardToSea[randomNumber].ship === false){
+        boardToSea[randomNumber].ship = true;
+        shipPlaced++;
+        lista.push(randomNumber)
       }
     }
+    console.log('listani ' + lista)
+    console.log(boardToSea);
+    setBoard(boardToSea);
   }
 
 
   function resetGame(){
-    hideShips();
+    setButtonText('New game');
     setShips(SHIP_AMOUNT);
     setBombs(BOMB_AMOUNT);
+    setHits(0);
+    setStatus('Game is on...');
     setBoard(Array(BOARDSIZE).fill(null).map((_, i) => ({id: i, ship: false, bombed: false})));
-    setStatus('Click the start button first...');
+    hideShips();
     setGameStarted(true);
     setTime(30);
   }
@@ -74,7 +86,7 @@ export default function GameBoard() {
     }
   }
   function showSea(number){
-    if(board[number].ship){
+    if(board[number].bombed && board[number].ship){
       return CIRCLE;
     } else if(board[number].bombed){
       return CROSS;
@@ -96,15 +108,15 @@ export default function GameBoard() {
 
   function drawItem(number){
     if(board[number].bombed === false && gameStarted) {
-      setStatus('Game is on...');
       board[number].bombed = true;
       setBombs(bombs - 1);
-      if(bombs === BOMB_AMOUNT){
-        setStatus("jee");
-        
-      } else if(board.indexOf(START) === -1){
-        setStatus('No winner');
+      if(board[number].ship === true){
+        board[number].ship = true;
+        setHits(hits +1);
+        setShips(ships -1);
       }
+    } else{
+      setStatus('Click the start button first...');
     }
   }
 
@@ -139,9 +151,9 @@ export default function GameBoard() {
     <View style={styles.gameboard}>
       <View style={styles.flex}>{items}</View>
       <Pressable style={styles.button} onPress={() => resetGame()}>
-        <Text style={styles.buttonText}>Start game</Text>
+        <Text style={styles.buttonText}>{buttonText}</Text>
       </Pressable>
-      <Text style={styles.gameinfo}>Hits: {hit} Bombs: {bombs} Ships: {ships}</Text>
+      <Text style={styles.gameinfo}>Hits: {hits} Bombs: {bombs} Ships: {ships}</Text>
       <Text style={styles.gameinfo}>Time: {time} sec</Text>
       <Text style={styles.gameinfo}>Status: {status}</Text>
     </View>
