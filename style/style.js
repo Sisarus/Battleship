@@ -67,7 +67,8 @@ export default StyleSheet.create({
     fontSize: 20
   },
   item: {
-    margin: 10,
-    padding: 5
+    margin: 8,
+    padding: 5,
+    backgroundColor: '#aaa2ff'
   },
 });
