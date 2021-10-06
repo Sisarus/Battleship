@@ -47,17 +47,16 @@ export default function GameBoard() {
 
   function hideShips(){
     let shipPlaced = 0;
-    let boardToSea = board;
     let lista = [];
     while(shipPlaced !== SHIP_AMOUNT){
       let randomNumber = Math.floor(Math.random() * BOARDSIZE);
-      if(boardToSea[randomNumber].ship === false){
-        boardToSea[randomNumber].ship = true;
+      if(board[randomNumber].ship === false){
+        board[randomNumber].ship = true;
         shipPlaced++;
         lista.push(randomNumber)
       }
     }
-    setBoard(boardToSea);
+    console.log(lista)
   }
 
 
