@@ -27,21 +27,23 @@ export default function GameBoard() {
       const id = window.setInterval(()=> {
         setTime(time => time-1);
       }, 1000);
-      if(ships === 0){
-        gameOver('win');
-      }
-      if(bombs === 0){
-        gameOver('');
-      }
       return () => window.clearInterval(id);
     }
   }, [gameStarted])
 
   useEffect(() => {
-    if(time <= 0){
-      gameOver('time');
+    if(gameStarted){
+      if(time <= 0){
+        gameOver('time');
+      }
+      if(ships === 0){
+        gameOver('win');
+      }
+      if(bombs === 0 && ships !== 0){
+        gameOver('');
+      }
     }
-  }, [time])
+  }, [time, ships, bombs])
 
   function hideShips(){
     let shipPlaced = 0;
@@ -49,26 +51,23 @@ export default function GameBoard() {
     let lista = [];
     while(shipPlaced !== SHIP_AMOUNT){
       let randomNumber = Math.floor(Math.random() * BOARDSIZE);
-      console.log(randomNumber);
       if(boardToSea[randomNumber].ship === false){
         boardToSea[randomNumber].ship = true;
         shipPlaced++;
         lista.push(randomNumber)
       }
     }
-    console.log('listani ' + lista)
-    console.log(boardToSea);
     setBoard(boardToSea);
   }
 
 
   function resetGame(){
     setButtonText('New game');
+    plainSea();
     setShips(SHIP_AMOUNT);
     setBombs(BOMB_AMOUNT);
     setHits(0);
     setStatus('Game is on...');
-    setBoard(Array(BOARDSIZE).fill(null).map((_, i) => ({id: i, ship: false, bombed: false})));
     hideShips();
     setGameStarted(true);
     setTime(30);
@@ -85,6 +84,7 @@ export default function GameBoard() {
       return '#74B9FF';
     }
   }
+  
   function showSea(number){
     if(board[number].bombed && board[number].ship){
       return CIRCLE;
@@ -106,6 +106,13 @@ export default function GameBoard() {
     }
   }
 
+  function plainSea(){
+    for(let i = 0; i < board.length; i++){
+      board[i].bombed = false;
+      board[i].ship = false;
+    }
+  }
+
   function drawItem(number){
     if(board[number].bombed === false && gameStarted) {
       board[number].bombed = true;
@@ -119,7 +126,6 @@ export default function GameBoard() {
       setStatus('Click the start button first...');
     }
   }
-
 
   const NBR_OF_ROWS = initialBoard.length/5;
   const NBR_OF_COLS = initialBoard.length/5;

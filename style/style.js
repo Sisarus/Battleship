@@ -41,7 +41,7 @@ export default StyleSheet.create({
     backgroundColor: '#fff',
     textAlign: 'center',
     justifyContent: 'center',
-    fontSize: 20,
+    fontSize: 16,
     marginTop: 10
   },
   row: {
@@ -52,7 +52,8 @@ export default StyleSheet.create({
     flexDirection: "row"
   },
   button: {
-    margin: 30,
+    marginTop: 15,
+    marginBottom: 15,
     flexDirection: "row",
     padding: 10,
     backgroundColor: "#73CED6",
@@ -66,7 +67,7 @@ export default StyleSheet.create({
     fontSize: 20
   },
   item: {
-    margin: 15,
+    margin: 10,
     padding: 5
   },
 });
