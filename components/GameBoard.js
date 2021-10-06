@@ -47,16 +47,13 @@ export default function GameBoard() {
 
   function hideShips(){
     let shipPlaced = 0;
-    let lista = [];
     while(shipPlaced !== SHIP_AMOUNT){
       let randomNumber = Math.floor(Math.random() * BOARDSIZE);
       if(board[randomNumber].ship === false){
         board[randomNumber].ship = true;
         shipPlaced++;
-        lista.push(randomNumber)
       }
     }
-    console.log(lista)
   }
 
 
@@ -121,7 +118,7 @@ export default function GameBoard() {
         setHits(hits +1);
         setShips(ships -1);
       }
-    } else{
+    } else if(!gameStarted){
       setStatus('Click the start button first...');
     }
   }

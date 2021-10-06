@@ -69,6 +69,5 @@ export default StyleSheet.create({
   item: {
     margin: 8,
     padding: 5,
-    backgroundColor: '#aaa2ff'
   },
 });
