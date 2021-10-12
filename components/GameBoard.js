@@ -118,7 +118,7 @@ export default function GameBoard() {
         setHits(hits +1);
         setShips(ships -1);
       }
-    } else if(!gameStarted){
+    } else if(!gameStarted && buttonText === 'Start game'){
       setStatus('Click the start button first...');
     }
   }
