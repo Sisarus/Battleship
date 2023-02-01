@@ -1,4 +1,3 @@
 # Battleship
 
 School project
-
